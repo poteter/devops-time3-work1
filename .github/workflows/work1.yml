@@ -1,0 +1,33 @@
+name: Build and Test Spring Boot Application
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'  # Use the Java version your project requires
+        distribution: 'temurin'  # Use the appropriate distribution (e.g., temurin, zulu)
+
+    - name: Build with Maven
+      run: mvn clean install -DskipTests=false
+
+    - name: Run Unit Tests
+      run: mvn test
+
+    - name: Notify Failure
+      if: failure()
+      run: echo "Unit tests failed! Check the logs for details."
